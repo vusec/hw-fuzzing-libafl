@@ -295,6 +295,10 @@ where
 
         let avg_exec_us = psmeta.exec_time().as_nanos() as f64 / psmeta.cycles() as f64;
         let avg_bitmap_size = psmeta.bitmap_size_log() / psmeta.bitmap_entries() as f64;
+        // FIXME: avoid this being NaN which crashes the rest.
+        if !avg_bitmap_size.is_normal() {
+            return Ok(0.01);
+        }
 
         let q_bitmap_size = tcmeta.bitmap_size() as f64;
 
