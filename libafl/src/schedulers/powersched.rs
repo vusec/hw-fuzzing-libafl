@@ -20,6 +20,12 @@ use crate::{
 /// The n fuzz size
 pub const N_FUZZ_SIZE: usize = 1 << 21;
 
+/// HWFuzzing CHANGE
+/// LibAfl does a bunch of math that crashes if the bitmap is (nearly) empty.
+/// This change works around that by always pretending there are at least 10
+/// (fake) filled coverage points.
+pub const MIN_BITMAP_FILLING: u64 = 10;
+
 crate::impl_serdeany!(SchedulerMetadata);
 
 /// The metadata used for power schedules
@@ -91,7 +97,7 @@ impl SchedulerMetadata {
     /// The bitmap size
     #[must_use]
     pub fn bitmap_size(&self) -> u64 {
-        self.bitmap_size
+        self.bitmap_size + MIN_BITMAP_FILLING
     }
 
     /// Sets the bitmap size
@@ -113,7 +119,7 @@ impl SchedulerMetadata {
     /// The number of filled map entries
     #[must_use]
     pub fn bitmap_entries(&self) -> u64 {
-        self.bitmap_entries
+        self.bitmap_entries + MIN_BITMAP_FILLING
     }
 
     /// Sets the number of filled map entries
